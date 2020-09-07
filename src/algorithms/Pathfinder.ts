@@ -15,7 +15,7 @@ export abstract class Pathfinder {
     for (let r = 0; r < G.length; r++) {
       const newRow: [number, number][] = [];
       for (let c = 0; c < G[r].length; c++) {
-        newRow.push([s[0], s[1]]);
+        newRow.push([0, 0]);
       }
       this.edgeTo.push(newRow);
     }

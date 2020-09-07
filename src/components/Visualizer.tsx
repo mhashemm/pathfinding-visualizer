@@ -62,8 +62,7 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
     });
   };
 
-  const reset = () => {
-    setGrid(gridInit());
+  const resetPath = () => {
     const rows = gridRef.current!.children;
     for (let r = 0; r < rows.length; r++) {
       const cols = rows[r].children as any;
@@ -71,6 +70,11 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
         cols[c].style = '';
       }
     }
+  };
+
+  const resetAll = () => {
+    setGrid(gridInit());
+    resetPath();
   };
 
   const goDFSgo = async () => {
@@ -130,8 +134,11 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
         ))}
       </div>
       <div className="buttons">
-        <button onClick={reset} disabled={isGo}>
-          RESET
+        <button onClick={resetAll} disabled={isGo}>
+          RESET ALL
+        </button>
+        <button onClick={resetPath} disabled={isGo}>
+          RESET PATH
         </button>
         <button onClick={goDFSgo} disabled={isGo}>
           DFS
