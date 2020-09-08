@@ -42,22 +42,7 @@ export class BFS extends Pathfinder {
     }
   }
 
-  public getDistTo(row: number, col: number) {
+  public distanceTo(row: number, col: number) {
     return this.G[row][col].distance;
-  }
-
-  public pathTo(row: number, col: number) {
-    if (!this.hasPathTo(row, col)) return null;
-    const path: [number, number][] = [];
-
-    let x: [number, number] = [row, col];
-
-    while (this.G[x[0]][x[1]].distance !== 0) {
-      path.push(x);
-      x = this.edgeTo[x[0]][x[1]];
-    }
-    path.push(x);
-
-    return path;
   }
 }

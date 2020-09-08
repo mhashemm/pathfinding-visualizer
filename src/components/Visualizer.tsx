@@ -116,7 +116,6 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
     setIsGo(true);
     const bfs = new BFS(grid, START);
     const steps = bfs.getSteps();
-    console.log(bfs.getDistTo(FINISH[0], FINISH[1]));
     const path = bfs.pathTo(FINISH[0], FINISH[1]);
     await drawSearch(steps);
     await drawPath(path);

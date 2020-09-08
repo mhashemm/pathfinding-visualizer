@@ -10,45 +10,15 @@ export abstract class Pathfinder {
     this.G = G.map((row) => row.map((node) => ({ ...node })));
     this.s = s;
 
-    this.edgeTo = [];
-
-    for (let r = 0; r < G.length; r++) {
-      const newRow: [number, number][] = [];
-      for (let c = 0; c < G[r].length; c++) {
-        newRow.push([0, 0]);
-      }
-      this.edgeTo.push(newRow);
-    }
+    this.edgeTo = G.map((row) => row.map(() => [0, 0]));
 
     this.steps = [this.s];
-  }
-
-  protected diagonalWalls(row: number, col: number): boolean {
-    if (this.isOutOfRange(row, col)) return false;
-
-    if (this.G[row][col].isWall) {
-      if (this.G[row - 1][col - 1].isWall && this.G[row + 1][col + 1]) {
-        return true;
-      }
-      if (this.G[row - 1][col + 1] && this.G[row + 1][col - 1]) {
-        return true;
-      }
-    }
-
-    return false;
   }
 
   protected isOutOfRange(row: number, col: number) {
     return (
       row < 0 || col < 0 || row >= this.G.length || col >= this.G[0].length
     );
-
-    // return (
-    //   row - 1 < 0 ||
-    //   col - 1 < 0 ||
-    //   row + 2 > this.G.length ||
-    //   col + 2 > this.G[0].length
-    // );
   }
 
   protected isNodeValid(row: number, col: number) {
