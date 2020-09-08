@@ -10,7 +10,7 @@ export class BFS extends Pathfinder {
   private bfs(row: number, col: number) {
     const q: [number, number][] = [[row, col]];
 
-    this.G[this.s[0]][this.s[1]].distance = 0;
+    this.G[row][col].distance = 0;
 
     while (q.length > 0) {
       const [r, c] = q.shift()!;
