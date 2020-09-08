@@ -122,16 +122,17 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
     setIsGo(false);
   };
 
-  const toggleMouse = () => setMouse((prev) => !prev);
+  const openMouse = () => setMouse(true);
+  const closeMouse = () => setMouse(false);
 
   return (
     <>
       <div
         className="grid"
         ref={gridRef}
-        onMouseDown={toggleMouse}
-        onMouseUp={toggleMouse}
-        onMouseLeave={toggleMouse}
+        onMouseDown={openMouse}
+        onMouseUp={closeMouse}
+        onMouseLeave={closeMouse}
       >
         {grid.map((row, i) => (
           <div className="row" key={i}>
