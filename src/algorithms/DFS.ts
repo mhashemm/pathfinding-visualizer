@@ -8,13 +8,7 @@ export class DFS extends Pathfinder {
   }
 
   private dfs(from: [number, number], row: number, col: number) {
-    if (
-      this.isOutOfRange(row, col) ||
-      this.G[row][col].isWall ||
-      this.G[row][col].isVisited
-    ) {
-      return;
-    }
+    if (!this.isNodeValid(row, col)) return;
 
     this.G[row][col].isVisited = true;
     this.steps.push([row, col]);

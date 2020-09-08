@@ -27,6 +27,7 @@ const gridInit = (
         isWall: false,
         isStart: false,
         isFinish: false,
+        distance: Infinity,
       });
     }
     grid.push(newRow);
@@ -45,6 +46,7 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
   const [isGo, setIsGo] = useState(false);
   const [grid, setGrid] = useState(gridInit());
   const [mouse, setMouse] = useState(false);
+  const [speed, setSpeed] = useState(1);
   const gridRef = useRef<HTMLDivElement>(null);
 
   const toggleWall = (node: INode) => {
@@ -77,38 +79,47 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
     resetPath();
   };
 
+  const drawSearch = async (steps: [number, number][]) => {
+    const rows = gridRef.current!.children;
+    for (let i = 0; i < steps.length; i++) {
+      const [row, col] = steps[i];
+      const cols = rows[row].children as any;
+      cols[col].style.backgroundColor = 'red';
+      if (row === FINISH[0] && col === FINISH[1]) break;
+      await sleep(speed);
+    }
+  };
+
+  const drawPath = async (path: [number, number][] | null) => {
+    if (!path) return;
+
+    const rows = gridRef.current!.children;
+    for (let i = path.length - 1; i >= 0; i--) {
+      const [row, col] = path[i];
+      const cols = rows[row].children as any;
+      cols[col].style.backgroundColor = 'green';
+      await sleep(speed);
+    }
+  };
+
   const goDFSgo = async () => {
     setIsGo(true);
     const dfs = new DFS(grid, START);
     const steps = dfs.getSteps();
     const path = dfs.pathTo(FINISH[0], FINISH[1]);
-    const rows = gridRef.current!.children;
-    for (let i = 0; i < steps.length; i++) {
-      const [row, col] = steps[i];
-      if (row === FINISH[0] && col === FINISH[1]) break;
-
-      const cols = rows[row].children as any;
-      cols[col].style.backgroundColor = 'red';
-      await sleep(1);
-    }
-    if (path) {
-      for (let i = 0; i < path.length; i++) {
-        const [row, col] = path[i];
-        const cols = rows[row].children as any;
-        cols[col].style.backgroundColor = 'green';
-        await sleep(1);
-      }
-    }
+    await drawSearch(steps);
+    await drawPath(path);
     setIsGo(false);
   };
 
   const goBFSgo = async () => {
     setIsGo(true);
     const bfs = new BFS(grid, START);
-    // const steps = bfs.getSteps();
-    // const path = bfs.pathTo(FINISH[0], FINISH[1]);
-    // const rows = gridRef.current!.children;
-
+    const steps = bfs.getSteps();
+    console.log(bfs.getDistTo(FINISH[0], FINISH[1]));
+    const path = bfs.pathTo(FINISH[0], FINISH[1]);
+    await drawSearch(steps);
+    await drawPath(path);
     setIsGo(false);
   };
 

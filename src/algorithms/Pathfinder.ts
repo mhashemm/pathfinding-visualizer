@@ -51,6 +51,14 @@ export abstract class Pathfinder {
     // );
   }
 
+  protected isNodeValid(row: number, col: number) {
+    return !(
+      this.isOutOfRange(row, col) ||
+      this.G[row][col].isWall ||
+      this.G[row][col].isVisited
+    );
+  }
+
   protected hasPathTo(row: number, col: number) {
     return this.G[row][col].isVisited;
   }

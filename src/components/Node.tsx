@@ -8,6 +8,7 @@ export interface INode {
   isWall: boolean;
   isStart: boolean;
   isFinish: boolean;
+  distance: number;
 }
 
 export interface NodeProps extends INode {
@@ -22,6 +23,7 @@ export const Node: FC<NodeProps> = ({
   isWall,
   isStart,
   isFinish,
+  distance,
   ...props
 }) => {
   return (
