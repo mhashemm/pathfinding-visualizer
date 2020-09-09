@@ -67,9 +67,9 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
   const resetPath = () => {
     const rows = gridRef.current!.children;
     for (let r = 0; r < rows.length; r++) {
-      const cols = rows[r].children as any;
+      const cols = rows.item(r)!.children;
       for (let c = 0; c < cols.length; c++) {
-        cols[c].style = '';
+        (cols.item(c) as HTMLDivElement).style.backgroundColor = '';
       }
     }
   };
