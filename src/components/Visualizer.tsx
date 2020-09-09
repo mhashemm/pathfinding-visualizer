@@ -83,8 +83,8 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
     const rows = gridRef.current!.children;
     for (let i = 0; i < steps.length; i++) {
       const [row, col] = steps[i];
-      const cols = rows[row].children as any;
-      cols[col].style.backgroundColor = 'red';
+      const cols = rows.item(row)!.children;
+      (cols.item(col) as HTMLDivElement).style.backgroundColor = 'red';
       if (row === FINISH[0] && col === FINISH[1]) break;
       await sleep(speed);
     }
@@ -96,8 +96,8 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
     const rows = gridRef.current!.children;
     for (let i = path.length - 1; i >= 0; i--) {
       const [row, col] = path[i];
-      const cols = rows[row].children as any;
-      cols[col].style.backgroundColor = 'green';
+      const cols = rows.item(row)!.children;
+      (cols.item(col) as HTMLDivElement).style.backgroundColor = 'green';
       await sleep(speed);
     }
   };
