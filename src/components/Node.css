@@ -1,17 +1,18 @@
 .node {
   width: 23px;
   height: 23px;
-  border: 1px solid black;
-  background-color: white;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
 }
 
 .start {
-  background-color: red !important;
+  background-image: url('../plus-solid.svg');
 }
 .finish {
-  background-color: green !important;
+  background-image: url('../minus-solid.svg');
 }
 
 .wall {
-  background-color: black !important;
+  background-color: var(--WALL) !important;
 }

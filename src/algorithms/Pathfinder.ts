@@ -9,9 +9,7 @@ export abstract class Pathfinder {
   constructor(G: INode[][], s: [number, number]) {
     this.G = G.map((row) => row.map((node) => ({ ...node })));
     this.s = s;
-
     this.edgeTo = G.map((row) => row.map(() => [0, 0]));
-
     this.steps = [this.s];
   }
 

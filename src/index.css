@@ -1,3 +1,8 @@
+:root {
+  --WALL: rgb(12, 53, 71);
+  --BORDER: 1px solid var(--WALL);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -12,6 +17,6 @@ input {
   font-family: inherit;
 }
 body {
-  font-family: monospace;
+  font-family: 'Roboto', sans-serif;
   font-size: 16px;
 }

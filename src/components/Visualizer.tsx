@@ -4,6 +4,7 @@ import { Node, INode } from './Node';
 import { DFS } from '../algorithms/DFS';
 import { BFS } from '../algorithms/BFS';
 import { sleep } from '../sleep';
+import { Maze } from '../algorithms/Maze';
 
 export interface VisualizerProps {}
 
@@ -84,7 +85,8 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
     for (let i = 0; i < steps.length; i++) {
       const [row, col] = steps[i];
       const cols = rows.item(row)!.children;
-      (cols.item(col) as HTMLDivElement).style.backgroundColor = 'red';
+      (cols.item(col) as HTMLDivElement).style.backgroundColor =
+        'rgba(17, 104, 217,0.3)';
       if (row === FINISH[0] && col === FINISH[1]) break;
       await sleep(speed);
     }
@@ -97,33 +99,46 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
     for (let i = path.length - 1; i >= 0; i--) {
       const [row, col] = path[i];
       const cols = rows.item(row)!.children;
-      (cols.item(col) as HTMLDivElement).style.backgroundColor = 'green';
-      await sleep(speed);
+      (cols.item(col) as HTMLDivElement).style.backgroundColor =
+        'rgb(255, 254, 106)';
+      await sleep(speed * 5);
     }
   };
 
   const goDFSgo = async () => {
     setIsGo(true);
+    resetPath();
     const dfs = new DFS(grid, START);
-    const steps = dfs.getSteps();
-    const path = dfs.pathTo(FINISH[0], FINISH[1]);
-    await drawSearch(steps);
-    await drawPath(path);
+    await drawSearch(dfs.getSteps());
+    await drawPath(dfs.pathTo(FINISH[0], FINISH[1]));
     setIsGo(false);
   };
 
   const goBFSgo = async () => {
     setIsGo(true);
+    resetPath();
     const bfs = new BFS(grid, START);
-    const steps = bfs.getSteps();
-    const path = bfs.pathTo(FINISH[0], FINISH[1]);
-    await drawSearch(steps);
-    await drawPath(path);
+    await drawSearch(bfs.getSteps());
+    await drawPath(bfs.pathTo(FINISH[0], FINISH[1]));
     setIsGo(false);
   };
 
   const openMouse = () => setMouse(true);
   const closeMouse = () => setMouse(false);
+
+  const randomMaze = () => {
+    resetAll();
+    const maze = new Maze(grid);
+    maze.randomMaze();
+    setGrid(maze.getMaze());
+  };
+
+  // const perfectMaze = () => {
+  //   resetAll();
+  //   const maze = new Maze(grid);
+  //   maze.perfectMaze(START[0], START[1]);
+  //   setGrid(maze.getMaze());
+  // };
 
   return (
     <>
@@ -141,7 +156,7 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
                 key={j}
                 {...node}
                 onMouseEnter={() => (mouse ? toggleWall(node) : null)}
-                onClick={() => toggleWall(node)}
+                onMouseDown={() => toggleWall(node)}
               />
             ))}
           </div>
@@ -149,11 +164,17 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
       </div>
       <div className="buttons">
         <button onClick={resetAll} disabled={isGo}>
-          RESET ALL
+          Reset All
         </button>
         <button onClick={resetPath} disabled={isGo}>
-          RESET PATH
+          Reset Path
         </button>
+        <button onClick={randomMaze} disabled={isGo}>
+          Random Maze
+        </button>
+        {/* <button onClick={perfectMaze} disabled={isGo}>
+          Perfect Maze
+        </button> */}
         <button onClick={goDFSgo} disabled={isGo}>
           DFS
         </button>

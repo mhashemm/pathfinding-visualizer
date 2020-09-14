@@ -1,12 +1,25 @@
 .grid {
   display: inline-flex;
   flex-direction: column;
-  border: 1px solid black;
   margin: 10px 0;
 }
 .row {
   display: inline-flex;
 }
+
+.row > * {
+  border-right: var(--BORDER);
+  border-bottom: var(--BORDER);
+}
+
+.grid > :first-child > * {
+  border-top: var(--BORDER);
+}
+
+.row > :first-child {
+  border-left: var(--BORDER);
+}
+
 .buttons {
   display: flex;
 }

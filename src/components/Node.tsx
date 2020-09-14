@@ -13,7 +13,7 @@ export interface INode {
 
 export interface NodeProps extends INode {
   onMouseEnter: () => void;
-  onClick: () => void;
+  onMouseDown: () => void;
 }
 
 export const Node: FC<NodeProps> = ({
@@ -26,9 +26,15 @@ export const Node: FC<NodeProps> = ({
   distance,
   ...props
 }) => {
-  return (
-    <div {...props} className={['node', isWall ? 'wall' : ''].join(' ')}>
-      {isStart ? '+' : isFinish ? '-' : null}
-    </div>
-  );
+  const classes = ['node'];
+
+  if (isWall) {
+    classes.push('wall');
+  } else if (isStart) {
+    classes.push('start');
+  } else if (isFinish) {
+    classes.push('finish');
+  }
+
+  return <div {...props} className={classes.join(' ')}></div>;
 };
