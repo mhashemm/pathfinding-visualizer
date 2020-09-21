@@ -16,3 +16,8 @@
 .wall {
   background-color: var(--WALL) !important;
 }
+
+.weight {
+  background-image: url('../weight-hanging-solid.svg');
+  background-size: 75%;
+}

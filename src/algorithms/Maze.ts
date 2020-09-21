@@ -17,10 +17,20 @@ export class Maze {
       row.map((node) => ({
         ...node,
         isVisited: node.isStart || node.isFinish,
-        // isWall: !(node.isStart || node.isFinish),
         isWall: false,
       }))
     );
+    const rows = this.G.length;
+    const cols = this.G[0].length;
+
+    for (let i = 0; i < rows; i++) {
+      this.G[i][0].isWall = true;
+      this.G[i][cols - 1].isWall = true;
+    }
+    for (let i = 0; i < cols; i++) {
+      this.G[0][i].isWall = true;
+      this.G[rows - 1][i].isWall = true;
+    }
     this.steps = [];
   }
 
@@ -42,58 +52,15 @@ export class Maze {
     return this.G[row][col].isStart || this.G[row][col].isFinish;
   }
 
-  private getNeighbors(row: number, col: number) {
-    const neighbors: INeighbors = { length: 0 };
+  public perfectMaze(start: [number, number], finish: [number, number]) {
+    // Recursive Division
+    // http://weblog.jamisbuck.org/2011/1/12/maze-generation-recursive-division-algorithm
+    // https://hurna.io/academy/algorithms/maze_generator/recursive_division.html
 
-    if (this.isNodeValid(row - 2, col)) {
-      neighbors.top = [row - 2, col];
-      neighbors.length++;
-    }
-    if (this.isNodeValid(row, col + 2)) {
-      neighbors.right = [row, col + 2];
-      neighbors.length++;
-    }
-    if (this.isNodeValid(row + 2, col)) {
-      neighbors.bottom = [row + 2, col];
-      neighbors.length++;
-    }
-    if (this.isNodeValid(row, col - 2)) {
-      neighbors.left = [row, col - 2];
-      neighbors.length++;
-    }
-
-    return neighbors;
-  }
-
-  public perfectMaze(row: number, col: number) {
-    this.G[row][col].isVisited = true;
-    while (
-      this.isNodeValid(row - 2, col) ||
-      this.isNodeValid(row, col + 2) ||
-      this.isNodeValid(row + 2, col) ||
-      this.isNodeValid(row, col - 2)
-    ) {
-      while (true) {
-        const r = this.rand(4);
-        if (r === 0 && this.isNodeValid(row - 2, col)) {
-          this.G[row - 1][col].isWall = true;
-          this.perfectMaze(row - 2, col);
-          break;
-        } else if (r === 1 && this.isNodeValid(row, col + 2)) {
-          this.G[row][col + 1].isWall = true;
-          this.perfectMaze(row, col + 2);
-          break;
-        } else if (r === 2 && this.isNodeValid(row + 2, col)) {
-          this.G[row + 1][col].isWall = true;
-          this.perfectMaze(row + 2, col);
-          break;
-        } else if (r === 3 && this.isNodeValid(row, col - 2)) {
-          this.G[row][col - 1].isWall = true;
-          this.perfectMaze(row, col - 2);
-          break;
-        }
-      }
-    }
+    const [sr, sc] = start;
+    const [fr, fc] = finish;
+    const rows = this.G.length;
+    const cols = this.G[0].length;
   }
 
   public randomMaze() {
@@ -105,8 +72,6 @@ export class Maze {
         const r = this.rand(3);
         if (r === 0) {
           node.isWall = true;
-        } else {
-          node.isWall = false;
         }
       });
     });

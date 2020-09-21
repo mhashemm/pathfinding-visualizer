@@ -6,6 +6,7 @@ export interface INode {
   col: number;
   isVisited: boolean;
   isWall: boolean;
+  isWeight: boolean;
   isStart: boolean;
   isFinish: boolean;
   distance: number;
@@ -21,6 +22,7 @@ export const Node: FC<NodeProps> = ({
   col,
   isVisited,
   isWall,
+  isWeight,
   isStart,
   isFinish,
   distance,
@@ -30,6 +32,8 @@ export const Node: FC<NodeProps> = ({
 
   if (isWall) {
     classes.push('wall');
+  } else if (isWeight) {
+    classes.push('weight');
   } else if (isStart) {
     classes.push('start');
   } else if (isFinish) {

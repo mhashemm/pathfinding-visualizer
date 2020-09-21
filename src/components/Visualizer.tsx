@@ -1,10 +1,11 @@
-import React, { FC, useState, useRef } from 'react';
+import React, { FC, useState, useRef, useEffect } from 'react';
 import './Visualizer.css';
 import { Node, INode } from './Node';
 import { DFS } from '../algorithms/DFS';
 import { BFS } from '../algorithms/BFS';
 import { sleep } from '../sleep';
 import { Maze } from '../algorithms/Maze';
+import { Dijkstra } from '../algorithms/Dijkstra';
 
 export interface VisualizerProps {}
 
@@ -26,6 +27,7 @@ const gridInit = (
         col,
         isVisited: false,
         isWall: false,
+        isWeight: false,
         isStart: false,
         isFinish: false,
         distance: Infinity,
@@ -48,18 +50,37 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
   const [grid, setGrid] = useState(gridInit());
   const [mouse, setMouse] = useState(false);
   const [speed, setSpeed] = useState(1);
+  const [key, setKey] = useState<string | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const keyDownHandler = (e: KeyboardEvent) => setKey(e.key.toLowerCase());
+    const keyUpHandler = () => setKey(null);
+    window.addEventListener('keydown', keyDownHandler);
+    window.addEventListener('keyup', keyUpHandler);
+    return () => {
+      window.removeEventListener('keydown', keyDownHandler);
+      window.removeEventListener('keyup', keyUpHandler);
+    };
+  }, []);
 
   const toggleWall = (node: INode) => {
     if (node.isFinish || node.isStart || isGo) return;
     setGrid((prev) => {
       const newGrid = [...prev];
-      const { row, col, isWall } = { ...node };
+      const { row, col, isWall, isWeight } = { ...node };
 
-      newGrid[row][col] = {
-        ...node,
-        isWall: !isWall,
-      };
+      if (key === 'w' && !isWall) {
+        newGrid[row][col] = {
+          ...node,
+          isWeight: !isWeight,
+        };
+      } else if (!isWeight) {
+        newGrid[row][col] = {
+          ...node,
+          isWall: !isWall,
+        };
+      }
 
       return newGrid;
     });
@@ -123,6 +144,15 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
     setIsGo(false);
   };
 
+  const goDIJKSTRAgo = async () => {
+    setIsGo(true);
+    resetPath();
+    const dijksta = new Dijkstra(grid, START);
+    await drawSearch(dijksta.getSteps());
+    await drawPath(dijksta.pathTo(FINISH[0], FINISH[1]));
+    setIsGo(false);
+  };
+
   const openMouse = () => setMouse(true);
   const closeMouse = () => setMouse(false);
 
@@ -133,12 +163,12 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
     setGrid(maze.getMaze());
   };
 
-  // const perfectMaze = () => {
-  //   resetAll();
-  //   const maze = new Maze(grid);
-  //   maze.perfectMaze(START[0], START[1]);
-  //   setGrid(maze.getMaze());
-  // };
+  const perfectMaze = () => {
+    resetAll();
+    const maze = new Maze(grid);
+    maze.perfectMaze(START, FINISH);
+    setGrid(maze.getMaze());
+  };
 
   return (
     <>
@@ -172,14 +202,17 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
         <button onClick={randomMaze} disabled={isGo}>
           Random Maze
         </button>
-        {/* <button onClick={perfectMaze} disabled={isGo}>
+        <button onClick={perfectMaze} disabled={isGo}>
           Perfect Maze
-        </button> */}
+        </button>
         <button onClick={goDFSgo} disabled={isGo}>
           DFS
         </button>
         <button onClick={goBFSgo} disabled={isGo}>
           BFS
+        </button>
+        <button onClick={goDIJKSTRAgo} disabled={isGo}>
+          Dijkstra
         </button>
       </div>
     </>
