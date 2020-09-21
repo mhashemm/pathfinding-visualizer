@@ -27,10 +27,7 @@ export class Dijkstra extends Pathfinder {
     const [fr, fc] = from;
     const [tr, tc] = to;
     if (!this.isNodeValid(tr, tc)) return;
-    if (
-      this.G[fr][fr].isWeight &&
-      this.G[tr][tc].distance > this.G[fr][fc].distance + this.weight
-    ) {
+    if (this.G[tr][tc].isWeight) {
       this.G[tr][tc].distance = this.G[fr][fc].distance + this.weight;
       this.weight++;
     } else {
