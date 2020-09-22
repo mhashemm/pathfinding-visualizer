@@ -10,16 +10,17 @@ export class Dijkstra extends Pathfinder {
     super(G, s);
     this.pq = new MinPQ(G.length * G[0].length);
     this.weight = 2;
-    this.G[s[0]][s[1]].distance = 0;
-    this.pq.insert(this.G[s[0]][s[1]]);
+    const [r, c] = s;
+    this.G[r][c].distance = 0;
+    this.G[r][c].isVisited = true;
+    this.pq.insert(this.G[r][c]);
 
     while (!this.pq.isEmpty()) {
       const { row, col } = this.pq.delMin()!;
-      this.G[row][col].isVisited = true;
       this.relax([row, col], [row - 1, col]);
       this.relax([row, col], [row, col + 1]);
-      this.relax([row, col], [row, col - 1]);
       this.relax([row, col], [row + 1, col]);
+      this.relax([row, col], [row, col - 1]);
     }
   }
 

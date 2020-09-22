@@ -126,48 +126,24 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
     }
   };
 
-  const goDFSgo = async () => {
+  const visualize = async (Pathfinder: any) => {
     setIsGo(true);
     resetPath();
-    const dfs = new DFS(grid, START);
-    await drawSearch(dfs.getSteps());
-    await drawPath(dfs.pathTo(FINISH[0], FINISH[1]));
-    setIsGo(false);
-  };
-
-  const goBFSgo = async () => {
-    setIsGo(true);
-    resetPath();
-    const bfs = new BFS(grid, START);
-    await drawSearch(bfs.getSteps());
-    await drawPath(bfs.pathTo(FINISH[0], FINISH[1]));
-    setIsGo(false);
-  };
-
-  const goDIJKSTRAgo = async () => {
-    setIsGo(true);
-    resetPath();
-    const dijksta = new Dijkstra(grid, START);
-    await drawSearch(dijksta.getSteps());
-    await drawPath(dijksta.pathTo(FINISH[0], FINISH[1]));
+    const pathfinder = new Pathfinder(grid, START);
+    await drawSearch(pathfinder.getSteps());
+    await drawPath(pathfinder.pathTo(FINISH[0], FINISH[1]));
     setIsGo(false);
   };
 
   const openMouse = () => setMouse(true);
   const closeMouse = () => setMouse(false);
 
-  const randomMaze = () => {
+  const maze = (type: 'random' | 'perfect') => {
     resetAll();
-    const maze = new Maze(grid);
-    maze.randomMaze();
-    setGrid(maze.getMaze());
-  };
-
-  const perfectMaze = () => {
-    resetAll();
-    const maze = new Maze(grid);
-    maze.perfectMaze(START, FINISH);
-    setGrid(maze.getMaze());
+    const _maze = new Maze(grid);
+    if (type === 'random') _maze.randomMaze();
+    else if (type === 'perfect') _maze.perfectMaze();
+    setGrid(_maze.getMaze());
   };
 
   return (
@@ -199,19 +175,19 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
         <button onClick={resetPath} disabled={isGo}>
           Reset Path
         </button>
-        <button onClick={randomMaze} disabled={isGo}>
+        <button onClick={() => maze('random')} disabled={isGo}>
           Random Maze
         </button>
-        <button onClick={perfectMaze} disabled={isGo}>
+        <button onClick={() => maze('perfect')} disabled={isGo}>
           Perfect Maze
         </button>
-        <button onClick={goDFSgo} disabled={isGo}>
+        <button onClick={() => visualize(DFS)} disabled={isGo}>
           DFS
         </button>
-        <button onClick={goBFSgo} disabled={isGo}>
+        <button onClick={() => visualize(BFS)} disabled={isGo}>
           BFS
         </button>
-        <button onClick={goDIJKSTRAgo} disabled={isGo}>
+        <button onClick={() => visualize(Dijkstra)} disabled={isGo}>
           Dijkstra
         </button>
       </div>
