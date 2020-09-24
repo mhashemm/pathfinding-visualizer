@@ -54,7 +54,8 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
   const gridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const keyDownHandler = (e: KeyboardEvent) => setKey(e.key.toLowerCase());
+    const keyDownHandler = (e: KeyboardEvent) => setKey(e.code);
+
     const keyUpHandler = () => setKey(null);
     window.addEventListener('keydown', keyDownHandler);
     window.addEventListener('keyup', keyUpHandler);
@@ -70,7 +71,7 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
       const newGrid = [...prev];
       const { row, col, isWall, isWeight } = { ...node };
 
-      if (key === 'w' && !isWall) {
+      if (key === 'KeyW' && !isWall) {
         newGrid[row][col] = {
           ...node,
           isWeight: !isWeight,
