@@ -61,12 +61,12 @@ export class Maze {
     if (maxX - minX < 2 || maxY - minY < 2) return;
     const h = orientation === Orientations.HORIZONTAL;
     if (h) {
-      const y = this.evenRand(minY, maxY);
+      const y = this.evenRand(minY + 1, maxY - 1);
       this.addHWall(minX, maxX, y);
       this.divide(this.orientation(maxX, y - 1), minX, maxX, minY, y - 1);
       this.divide(Orientations.VERTICAL, minX, maxX, y + 1, maxY);
     } else {
-      const x = this.evenRand(minX, maxX - 1);
+      const x = this.evenRand(minX + 1, maxX - 1);
       this.addVWall(minY, maxY, x);
       this.divide(this.orientation(x - 1, maxY), minX, x - 1, minY, maxY);
       this.divide(Orientations.HORIZONTAL, x + 1, maxX, minY, maxY);
