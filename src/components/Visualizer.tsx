@@ -12,10 +12,9 @@ export interface VisualizerProps {}
 let START: [number, number];
 let FINISH: [number, number];
 
-const gridInit = (
-  width: number = window.innerWidth,
-  height: number = window.innerHeight
-) => {
+function gridInit() {
+  const width = window.innerWidth;
+  const height = window.innerHeight;
   const s = 26;
   const grid: INode[][] = [];
 
@@ -43,7 +42,7 @@ const gridInit = (
   grid[FINISH[0]][FINISH[1]].isFinish = true;
 
   return grid;
-};
+}
 
 export const Visualizer: FC<VisualizerProps> = (props) => {
   const [isGo, setIsGo] = useState(false);
@@ -139,9 +138,9 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
   const openMouse = () => setMouse(true);
   const closeMouse = () => setMouse(false);
 
-  const maze = (type: 'random' | 'perfect') => {
+  const maze = async (type: 'random' | 'perfect') => {
     resetAll();
-    const _maze = new Maze(grid);
+    const _maze = new Maze(grid, START, FINISH);
     if (type === 'random') _maze.randomMaze();
     else if (type === 'perfect') _maze.perfectMaze();
     setGrid(_maze.getMaze());

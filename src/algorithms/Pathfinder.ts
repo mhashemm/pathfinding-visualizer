@@ -27,7 +27,7 @@ export abstract class Pathfinder {
     );
   }
 
-  protected hasPathTo(row: number, col: number) {
+  public hasPathTo(row: number, col: number) {
     return this.G[row][col].isVisited;
   }
 

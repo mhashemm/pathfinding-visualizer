@@ -4,8 +4,10 @@ export class Maze {
   private G: INode[][];
   private rows: number;
   private cols: number;
+  private start: [number, number];
+  private finish: [number, number];
 
-  constructor(G: INode[][]) {
+  constructor(G: INode[][], start: [number, number], finish: [number, number]) {
     this.G = G.map((row) =>
       row.map((node) => ({
         ...node,
@@ -14,7 +16,19 @@ export class Maze {
     );
     this.rows = this.G.length;
     this.cols = this.G[0].length;
+    this.start = start;
+    this.finish = finish;
+  }
 
+  private rand(min: number, max: number) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  }
+
+  private evenRand(min: number, max: number) {
+    return Math.floor(this.rand(min, max) / 2) * 2;
+  }
+
+  public perfectMaze() {
     for (let i = 0; i < this.rows; i++) {
       this.G[i][0].isWall = true;
       this.G[i][this.cols - 1].isWall = true;
@@ -23,24 +37,7 @@ export class Maze {
       this.G[0][i].isWall = true;
       this.G[this.rows - 1][i].isWall = true;
     }
-  }
-
-  private rand(min: number, max: number) {
-    return Math.floor(Math.random() * (max - min + 1) + min);
-  }
-
-  private isNodeStartOrFinish(row: number, col: number) {
-    return this.G[row][col].isStart || this.G[row][col].isFinish;
-  }
-
-  public perfectMaze() {
-    // Recursive Division
-    // http://weblog.jamisbuck.org/2011/1/12/maze-generation-recursive-division-algorithm
-    // https://hurna.io/academy/algorithms/maze_generator/recursive_division.html
-    // https://gist.github.com/josiahcarlson/904686/59fed91abf758d3f125290544ed5f2ced2227a7f
-    // https://stackoverflow.com/questions/23530756/maze-recursive-division-algorithm-design
-    // https://github.com/armin-reichert/mazes/blob/master/mazes-algorithms/src/main/java/de/amr/maze/alg/others/RecursiveDivision.java
-    this.divide(true, 1, this.cols - 2, 1, this.rows - 2);
+    this.divide(this.rows > this.cols, 1, this.cols - 2, 1, this.rows - 2);
   }
 
   private divide(
@@ -50,15 +47,14 @@ export class Maze {
     minY: number,
     maxY: number
   ) {
+    if (maxX - minX < 2 || maxY - minY < 2) return;
     if (h) {
-      if (maxX - minX < 2) return;
-      const y = Math.floor(this.rand(minY, maxY) / 2) * 2;
+      const y = this.evenRand(minY, maxY);
       this.addHWall(minX, maxX, y);
       this.divide(!h, minX, maxX, minY, y - 1);
       this.divide(!h, minX, maxX, y + 1, maxY);
     } else {
-      if (maxY - minY < 2) return;
-      const x = Math.floor(this.rand(minX, maxX) / 2) * 2;
+      const x = this.evenRand(minX, maxX);
       this.addVWall(minY, maxY, x);
       this.divide(!h, minX, x - 1, minY, maxY);
       this.divide(!h, x + 1, maxX, minY, maxY);
@@ -66,18 +62,22 @@ export class Maze {
   }
 
   private addHWall(minX: number, maxX: number, y: number) {
-    const hole = Math.floor(this.rand(minX, maxX) / 2) * 2 + 1;
+    const hole = this.evenRand(minX, maxX) + 1;
     for (let i = minX; i <= maxX; i++) {
-      if (i !== hole && !this.isNodeStartOrFinish(y, i)) {
+      if (i === hole) {
+        this.G[y][i].isWall = false;
+      } else {
         this.G[y][i].isWall = true;
       }
     }
   }
 
   private addVWall(minY: number, maxY: number, x: number) {
-    const hole = Math.floor(this.rand(minY, maxY) / 2) * 2 + 1;
+    const hole = this.evenRand(minY, maxY) + 1;
     for (let i = minY; i <= maxY; i++) {
-      if (i !== hole && !this.isNodeStartOrFinish(i, x)) {
+      if (i === hole) {
+        this.G[i][x].isWall = false;
+      } else {
         this.G[i][x].isWall = true;
       }
     }
@@ -86,9 +86,6 @@ export class Maze {
   public randomMaze() {
     this.G.forEach((row) => {
       row.forEach((node) => {
-        if (this.isNodeStartOrFinish(node.row, node.col)) {
-          return;
-        }
         const r = this.rand(0, 2);
         if (r === 0) {
           node.isWall = true;
@@ -99,7 +96,19 @@ export class Maze {
     });
   }
 
+  private removeWallsAround(row: number, col: number) {
+    this.G[row][col].isWall = false;
+    this.G[row - 1][col].isWall = false;
+    this.G[row][col + 1].isWall = false;
+    this.G[row + 1][col].isWall = false;
+    this.G[row][col - 1].isWall = false;
+  }
+
   public getMaze() {
+    const [sr, sc] = this.start;
+    const [fr, fc] = this.finish;
+    this.removeWallsAround(sr, sc);
+    this.removeWallsAround(fr, fc);
     return this.G;
   }
 }
