@@ -58,17 +58,18 @@ export class Maze {
     minY: number,
     maxY: number
   ) {
-    if (maxX - minX < 2 || maxY - minY < 2) return;
-    const h = orientation === Orientations.HORIZONTAL;
-    if (h) {
+    const horizontal = orientation === Orientations.HORIZONTAL;
+    if (horizontal) {
+      if (maxX - minX < 2) return;
       const y = this.evenRand(minY + 1, maxY - 1);
       this.addHWall(minX, maxX, y);
-      this.divide(this.orientation(maxX, y - 1), minX, maxX, minY, y - 1);
+      this.divide(Orientations.VERTICAL, minX, maxX, minY, y - 1);
       this.divide(Orientations.VERTICAL, minX, maxX, y + 1, maxY);
     } else {
+      if (maxY - minY < 2) return;
       const x = this.evenRand(minX + 1, maxX - 1);
       this.addVWall(minY, maxY, x);
-      this.divide(this.orientation(x - 1, maxY), minX, x - 1, minY, maxY);
+      this.divide(Orientations.HORIZONTAL, minX, x - 1, minY, maxY);
       this.divide(Orientations.HORIZONTAL, x + 1, maxX, minY, maxY);
     }
   }
@@ -84,7 +85,7 @@ export class Maze {
   }
 
   private addHWall(minX: number, maxX: number, y: number) {
-    const hole = this.evenRand(minX, maxX) + 1;
+    const hole = this.evenRand(minX + 1, maxX - 1) + 1;
     for (let i = minX; i <= maxX; i++) {
       if (i === hole) {
         this.G[y][i].isWall = false;
@@ -95,7 +96,7 @@ export class Maze {
   }
 
   private addVWall(minY: number, maxY: number, x: number) {
-    const hole = this.evenRand(minY, maxY) + 1;
+    const hole = this.evenRand(minY + 1, maxY - 1) + 1;
     for (let i = minY; i <= maxY; i++) {
       if (i === hole) {
         this.G[i][x].isWall = false;
@@ -124,6 +125,10 @@ export class Maze {
     this.G[row][col + 1].isWall = false;
     this.G[row + 1][col].isWall = false;
     this.G[row][col - 1].isWall = false;
+    this.G[row - 1][col - 1].isWall = false;
+    this.G[row + 1][col + 1].isWall = false;
+    this.G[row - 1][col + 1].isWall = false;
+    this.G[row + 1][col - 1].isWall = false;
   }
 
   public getMaze() {
