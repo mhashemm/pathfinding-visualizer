@@ -1,5 +1,10 @@
 import { INode } from '../components/Node';
 
+enum Orientations {
+  HORIZONTAL,
+  VERTICAL,
+}
+
 export class Maze {
   private G: INode[][];
   private rows: number;
@@ -37,28 +42,45 @@ export class Maze {
       this.G[0][i].isWall = true;
       this.G[this.rows - 1][i].isWall = true;
     }
-    this.divide(this.rows > this.cols, 1, this.cols - 2, 1, this.rows - 2);
+    this.divide(
+      this.orientation(this.cols, this.rows),
+      1,
+      this.cols - 2,
+      1,
+      this.rows - 2
+    );
   }
 
   private divide(
-    h: boolean,
+    orientation: Orientations,
     minX: number,
     maxX: number,
     minY: number,
     maxY: number
   ) {
     if (maxX - minX < 2 || maxY - minY < 2) return;
+    const h = orientation === Orientations.HORIZONTAL;
     if (h) {
       const y = this.evenRand(minY, maxY);
       this.addHWall(minX, maxX, y);
-      this.divide(!h, minX, maxX, minY, y - 1);
-      this.divide(!h, minX, maxX, y + 1, maxY);
+      this.divide(this.orientation(maxX, y - 1), minX, maxX, minY, y - 1);
+      this.divide(Orientations.VERTICAL, minX, maxX, y + 1, maxY);
     } else {
-      const x = this.evenRand(minX, maxX);
+      const x = this.evenRand(minX, maxX - 1);
       this.addVWall(minY, maxY, x);
-      this.divide(!h, minX, x - 1, minY, maxY);
-      this.divide(!h, x + 1, maxX, minY, maxY);
+      this.divide(this.orientation(x - 1, maxY), minX, x - 1, minY, maxY);
+      this.divide(Orientations.HORIZONTAL, x + 1, maxX, minY, maxY);
     }
+  }
+
+  private orientation(width: number, height: number) {
+    return width < height
+      ? Orientations.HORIZONTAL
+      : height < width
+      ? Orientations.VERTICAL
+      : this.rand(0, 1) === 0
+      ? Orientations.HORIZONTAL
+      : Orientations.VERTICAL;
   }
 
   private addHWall(minX: number, maxX: number, y: number) {
