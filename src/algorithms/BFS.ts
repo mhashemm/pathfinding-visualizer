@@ -17,7 +17,7 @@ export class BFS extends Pathfinder {
       if (!this.isNodeValid(r, c)) continue;
 
       this.steps.push([r, c]);
-      this.G[r][c].isVisited = true;
+      this.marked[r][c] = true;
 
       if (this.isNodeValid(r - 1, c)) {
         this.edgeTo[r - 1][c] = [r, c];

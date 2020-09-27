@@ -2,14 +2,16 @@ import { INode } from '../components/Node';
 
 export abstract class Pathfinder {
   protected edgeTo: [number, number][][];
+  protected marked: boolean[][];
   protected s: [number, number];
   protected steps: [number, number][];
   protected G: INode[][];
 
   constructor(G: INode[][], s: [number, number]) {
     this.G = G.map((row) => row.map((node) => ({ ...node })));
-    this.s = s;
     this.edgeTo = G.map((row) => row.map(() => [0, 0]));
+    this.marked = G.map((row) => row.map(() => false));
+    this.s = s;
     this.steps = [this.s];
   }
 
@@ -23,12 +25,12 @@ export abstract class Pathfinder {
     return !(
       this.isOutOfRange(row, col) ||
       this.G[row][col].isWall ||
-      this.G[row][col].isVisited
+      this.marked[row][col]
     );
   }
 
   public hasPathTo(row: number, col: number) {
-    return this.G[row][col].isVisited;
+    return this.marked[row][col];
   }
 
   public pathTo(row: number, col: number) {

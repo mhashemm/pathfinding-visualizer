@@ -12,7 +12,7 @@ export class Dijkstra extends Pathfinder {
     this.weight = 2;
     const [r, c] = s;
     this.G[r][c].distance = 0;
-    this.G[r][c].isVisited = true;
+    this.marked[r][c] = true;
     this.pq.insert(this.G[r][c]);
 
     while (!this.pq.isEmpty()) {
@@ -35,7 +35,7 @@ export class Dijkstra extends Pathfinder {
       this.G[tr][tc].distance = this.G[fr][fc].distance + 1;
     }
     this.edgeTo[tr][tc] = [fr, fc];
-    this.G[tr][tc].isVisited = true;
+    this.marked[tr][tc] = true;
     this.pq.insert(this.G[tr][tc]);
     this.steps.push([tr, tc]);
   }

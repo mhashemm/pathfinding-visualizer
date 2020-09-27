@@ -4,7 +4,6 @@ import './Node.css';
 export interface INode {
   row: number;
   col: number;
-  isVisited: boolean;
   isWall: boolean;
   isWeight: boolean;
   isStart: boolean;
@@ -20,7 +19,6 @@ export interface NodeProps extends INode {
 export const Node: FC<NodeProps> = ({
   row,
   col,
-  isVisited,
   isWall,
   isWeight,
   isStart,

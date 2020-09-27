@@ -24,7 +24,6 @@ function gridInit() {
       newRow.push({
         row,
         col,
-        isVisited: false,
         isWall: false,
         isWeight: false,
         isStart: false,
