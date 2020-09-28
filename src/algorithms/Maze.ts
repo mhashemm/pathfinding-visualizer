@@ -119,16 +119,26 @@ export class Maze {
     });
   }
 
+  private isOutOfRange(row: number, col: number) {
+    return (
+      row < 0 || col < 0 || row >= this.G.length || col >= this.G[0].length
+    );
+  }
+
   private removeWallsAround(row: number, col: number) {
     this.G[row][col].isWall = false;
-    this.G[row - 1][col].isWall = false;
-    this.G[row][col + 1].isWall = false;
-    this.G[row + 1][col].isWall = false;
-    this.G[row][col - 1].isWall = false;
-    this.G[row - 1][col - 1].isWall = false;
-    this.G[row + 1][col + 1].isWall = false;
-    this.G[row - 1][col + 1].isWall = false;
-    this.G[row + 1][col - 1].isWall = false;
+    if (!this.isOutOfRange(row - 1, col) && row - 1 > 0) {
+      this.G[row - 1][col].isWall = false;
+    }
+    if (!this.isOutOfRange(row, col + 1) && col + 1 < this.G[0].length - 1) {
+      this.G[row][col + 1].isWall = false;
+    }
+    if (!this.isOutOfRange(row + 1, col) && row + 1 < this.G.length - 1) {
+      this.G[row + 1][col].isWall = false;
+    }
+    if (!this.isOutOfRange(row, col - 1) && col - 1 > 0) {
+      this.G[row][col - 1].isWall = false;
+    }
   }
 
   public getMaze() {

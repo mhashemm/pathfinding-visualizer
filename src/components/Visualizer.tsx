@@ -9,13 +9,19 @@ import { Dijkstra } from '../algorithms/Dijkstra';
 
 export interface VisualizerProps {}
 
-let START: [number, number];
-let FINISH: [number, number];
+const drawColor = 'rgba(17, 104, 217,0.3)';
+const pathColor = 'rgb(255, 254, 106)';
+const width = window.innerWidth;
+const height = window.innerHeight;
+const s = 26;
+const speed = 1;
+let [startRow, startCol] = [Math.floor(height / s / 2), 2];
+let [finishRow, finishCol] = [
+  Math.floor(height / s / 2),
+  Math.floor(width / s) - 2,
+];
 
-function gridInit() {
-  const width = window.innerWidth;
-  const height = window.innerHeight;
-  const s = 26;
+const gridInit = () => {
   const grid: INode[][] = [];
 
   for (let row = 0; row < height / s; row++) {
@@ -34,26 +40,21 @@ function gridInit() {
     grid.push(newRow);
   }
 
-  START = [Math.floor(height / s / 2), 2];
-  FINISH = [Math.floor(height / s / 2), Math.floor(width / s) - 2];
-
-  grid[START[0]][START[1]].isStart = true;
-  grid[FINISH[0]][FINISH[1]].isFinish = true;
+  grid[startRow][startCol].isStart = true;
+  grid[finishRow][finishCol].isFinish = true;
 
   return grid;
-}
+};
 
 export const Visualizer: FC<VisualizerProps> = (props) => {
   const [isGo, setIsGo] = useState(false);
   const [grid, setGrid] = useState(gridInit());
   const [mouse, setMouse] = useState(false);
-  const [speed, setSpeed] = useState(1);
   const [key, setKey] = useState<string | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const keyDownHandler = (e: KeyboardEvent) => setKey(e.code);
-
     const keyUpHandler = () => setKey(null);
     window.addEventListener('keydown', keyDownHandler);
     window.addEventListener('keyup', keyUpHandler);
@@ -63,22 +64,30 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
     };
   }, []);
 
-  const toggleWall = (node: INode) => {
-    if (node.isFinish || node.isStart || isGo) return;
+  const toggleNodeState = (node: INode) => {
+    if (isGo || node.isStart || node.isFinish) return;
     setGrid((prev) => {
       const newGrid = [...prev];
       const { row, col, isWall, isWeight } = { ...node };
 
-      if (key === 'KeyW' && !isWall) {
-        newGrid[row][col] = {
-          ...node,
-          isWeight: !isWeight,
-        };
-      } else if (!isWeight) {
+      if (key === null && !isWeight) {
         newGrid[row][col] = {
           ...node,
           isWall: !isWall,
         };
+      } else if (key === 'KeyW' && !isWall) {
+        newGrid[row][col] = {
+          ...node,
+          isWeight: !isWeight,
+        };
+      } else if (key === 'KeyS' && !(isWall || isWeight)) {
+        newGrid[startRow][startCol].isStart = false;
+        [startRow, startCol] = [row, col];
+        newGrid[startRow][startCol].isStart = true;
+      } else if (key === 'KeyF' && !(isWall || isWeight)) {
+        newGrid[finishRow][finishCol].isFinish = false;
+        [finishRow, finishCol] = [row, col];
+        newGrid[finishRow][finishCol].isFinish = true;
       }
 
       return newGrid;
@@ -96,6 +105,11 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
   };
 
   const resetAll = () => {
+    [startRow, startCol] = [Math.floor(height / s / 2), 2];
+    [finishRow, finishCol] = [
+      Math.floor(height / s / 2),
+      Math.floor(width / s) - 2,
+    ];
     setGrid(gridInit());
     resetPath();
   };
@@ -105,9 +119,8 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
     for (let i = 0; i < steps.length; i++) {
       const [row, col] = steps[i];
       const cols = rows.item(row)!.children;
-      (cols.item(col) as HTMLDivElement).style.backgroundColor =
-        'rgba(17, 104, 217,0.3)';
-      if (row === FINISH[0] && col === FINISH[1]) break;
+      (cols.item(col) as HTMLDivElement).style.backgroundColor = drawColor;
+      if (row === finishRow && col === finishCol) break;
       await sleep(speed);
     }
   };
@@ -119,18 +132,17 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
     for (let i = path.length - 1; i >= 0; i--) {
       const [row, col] = path[i];
       const cols = rows.item(row)!.children;
-      (cols.item(col) as HTMLDivElement).style.backgroundColor =
-        'rgb(255, 254, 106)';
-      await sleep(speed * 5);
+      (cols.item(col) as HTMLDivElement).style.backgroundColor = pathColor;
+      await sleep(speed * 10);
     }
   };
 
   const visualize = async (Pathfinder: any) => {
     setIsGo(true);
     resetPath();
-    const pathfinder = new Pathfinder(grid, START);
+    const pathfinder = new Pathfinder(grid, [startRow, startCol]);
     await drawSearch(pathfinder.getSteps());
-    await drawPath(pathfinder.pathTo(FINISH[0], FINISH[1]));
+    await drawPath(pathfinder.pathTo(finishRow, finishCol));
     setIsGo(false);
   };
 
@@ -138,8 +150,8 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
   const closeMouse = () => setMouse(false);
 
   const maze = async (type: 'random' | 'perfect') => {
-    resetAll();
-    const _maze = new Maze(grid, START, FINISH);
+    resetPath();
+    const _maze = new Maze(grid, [startRow, startCol], [finishRow, finishCol]);
     if (type === 'random') _maze.randomMaze();
     else if (type === 'perfect') _maze.perfectMaze();
     setGrid(_maze.getMaze());
@@ -160,8 +172,8 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
               <Node
                 key={j}
                 {...node}
-                onMouseEnter={() => (mouse ? toggleWall(node) : null)}
-                onMouseDown={() => toggleWall(node)}
+                onMouseEnter={() => (mouse ? toggleNodeState(node) : null)}
+                onMouseDown={() => toggleNodeState(node)}
               />
             ))}
           </div>
@@ -190,6 +202,10 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
           Dijkstra
         </button>
       </div>
+      <p>
+        Click on the grid to add a wall. Click while pressing W to add a weight,
+        S to the change start node and F to the change finish node.
+      </p>
     </>
   );
 };
