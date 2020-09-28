@@ -1,6 +1,7 @@
 import React, { FC, useState, useRef, useEffect } from 'react';
 import './Visualizer.css';
 import { Node, INode } from './Node';
+import { Pathfinder } from '../algorithms/Pathfinder';
 import { DFS } from '../algorithms/DFS';
 import { BFS } from '../algorithms/BFS';
 import { sleep } from '../sleep';
@@ -137,10 +138,9 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
     }
   };
 
-  const visualize = async (Pathfinder: any) => {
+  const visualize = async (pathfinder: Pathfinder) => {
     setIsGo(true);
     resetPath();
-    const pathfinder = new Pathfinder(grid, [startRow, startCol]);
     await drawSearch(pathfinder.getSteps());
     await drawPath(pathfinder.pathTo(finishRow, finishCol));
     setIsGo(false);
@@ -192,13 +192,22 @@ export const Visualizer: FC<VisualizerProps> = (props) => {
         <button onClick={() => maze('perfect')} disabled={isGo}>
           Perfect Maze
         </button>
-        <button onClick={() => visualize(DFS)} disabled={isGo}>
+        <button
+          onClick={() => visualize(new DFS(grid, [startRow, startCol]))}
+          disabled={isGo}
+        >
           DFS
         </button>
-        <button onClick={() => visualize(BFS)} disabled={isGo}>
+        <button
+          onClick={() => visualize(new BFS(grid, [startRow, startCol]))}
+          disabled={isGo}
+        >
           BFS
         </button>
-        <button onClick={() => visualize(Dijkstra)} disabled={isGo}>
+        <button
+          onClick={() => visualize(new Dijkstra(grid, [startRow, startCol]))}
+          disabled={isGo}
+        >
           Dijkstra
         </button>
       </div>
