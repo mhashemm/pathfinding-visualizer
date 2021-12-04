@@ -25,10 +25,10 @@ export class Node {
 		return this._weight;
 	}
 
-	public setHScore(destNode: Node) {
-		const x = Math.pow(this.col - destNode.col, 2);
-		const y = Math.pow(this.row - destNode.row, 2);
-		this._hScore = (Math.sqrt(x + y) * 1000) | 0;
+	public setHScore(dest: Position) {
+		const dx = Math.abs(this.col - dest[1]);
+		const dy = Math.abs(this.row - dest[0]);
+		this._hScore = 14 * Math.min(dx, dy) + 10 * Math.abs(dx - dy);
 	}
 
 	get fScore() {

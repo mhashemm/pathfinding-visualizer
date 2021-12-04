@@ -8,12 +8,12 @@ const comparator = (x: Node, y: Node) => {
 
 export class AStar extends Pathfinder {
 	private pq: MinPQ<Node>;
+	private dest: Position;
 
 	constructor(G: Node[][], s: Position, dest: Position) {
 		super(G, s);
-		const destNode = this.G[dest[0]][dest[1]];
-		this.G.forEach((row) => row.forEach((node) => node.setHScore(destNode)));
 		this.pq = new MinPQ(G.length * G[0].length, comparator);
+		this.dest = dest;
 		this.directions = [
 			[-1, -1, 14],
 			[-1, 0, 10],
@@ -26,6 +26,7 @@ export class AStar extends Pathfinder {
 		];
 
 		this.G[s[0]][s[1]].gScore = 0;
+		this.G[s[0]][s[1]].setHScore(this.dest);
 		this.pq.insert(this.G[s[0]][s[1]]);
 
 		while (!this.pq.isEmpty()) {
@@ -42,6 +43,7 @@ export class AStar extends Pathfinder {
 		this.edgeTo[tr][tc] = [fr, fc];
 		this.marked[tr][tc] = true;
 		this.G[tr][tc].gScore = from.gScore + cost;
+		this.G[tr][tc].setHScore(this.dest);
 		this.pq.insert(this.G[tr][tc]);
 		this.steps.push([tr, tc]);
 	}
