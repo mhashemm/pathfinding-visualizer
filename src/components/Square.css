@@ -1,0 +1,23 @@
+.node {
+	width: 23px;
+	height: 23px;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+}
+
+.start {
+	background-image: url("../plus-solid.svg");
+}
+.finish {
+	background-image: url("../minus-solid.svg");
+}
+
+.wall {
+	background-color: var(--WALL) !important;
+}
+
+.weight {
+	background-image: url("../weight-hanging-solid.svg");
+	background-size: 75%;
+}

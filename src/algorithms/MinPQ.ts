@@ -1,56 +1,56 @@
-import { INode } from '../components/Node';
+export class MinPQ<T> {
+	private pq: T[];
+	private n: number;
+	private comparator: (x: T, y: T) => -1 | 0 | 1;
 
-export class MinPQ {
-  private pq: INode[];
-  private n: number;
+	constructor(capacity: number, comparator: (x: T, y: T) => -1 | 0 | 1) {
+		this.pq = new Array(capacity + 1);
+		this.n = 0;
+		this.comparator = comparator;
+	}
 
-  constructor(capacity: number) {
-    this.pq = new Array(capacity + 1);
-    this.n = 0;
-  }
+	public insert(x: T) {
+		this.pq[++this.n] = x;
+		this.swim(this.n);
+	}
 
-  public insert(x: INode) {
-    this.pq[++this.n] = { ...x };
-    this.swim(this.n);
-  }
+	public delMin() {
+		if (this.isEmpty()) return;
+		const min = this.pq[1];
+		this.exch(1, this.n--);
+		this.sink(1);
+		this.pq[this.n + 1] = null!;
+		return min;
+	}
 
-  public delMin() {
-    if (this.isEmpty()) return;
-    const min = { ...this.pq[1] };
-    this.exch(1, this.n--);
-    this.sink(1);
-    delete this.pq[this.n + 1];
-    return min;
-  }
+	private swim(k: number) {
+		while (k > 1 && this.greater(Math.floor(k / 2), k)) {
+			this.exch(k, Math.floor(k / 2));
+			k = Math.floor(k / 2);
+		}
+	}
 
-  private swim(k: number) {
-    while (k > 1 && this.greater(Math.floor(k / 2), k)) {
-      this.exch(k, Math.floor(k / 2));
-      k = Math.floor(k / 2);
-    }
-  }
+	private sink(k: number) {
+		while (2 * k <= this.n) {
+			let j = 2 * k;
+			if (j < this.n && this.greater(j, j + 1)) j++;
+			if (!this.greater(k, j)) break;
+			this.exch(k, j);
+			k = j;
+		}
+	}
 
-  private sink(k: number) {
-    while (2 * k <= this.n) {
-      let j = 2 * k;
-      if (j < this.n && this.greater(j, j + 1)) j++;
-      if (!this.greater(k, j)) break;
-      this.exch(k, j);
-      k = j;
-    }
-  }
+	public isEmpty() {
+		return this.n === 0;
+	}
 
-  public isEmpty() {
-    return this.n === 0;
-  }
+	private greater(i: number, j: number) {
+		return this.comparator(this.pq[i], this.pq[j]) === 1;
+	}
 
-  private greater(i: number, j: number) {
-    return this.pq[i].distance > this.pq[j].distance;
-  }
-
-  private exch(i: number, j: number) {
-    const swap = this.pq[i];
-    this.pq[i] = this.pq[j];
-    this.pq[j] = swap;
-  }
+	private exch(i: number, j: number) {
+		const swap = this.pq[i];
+		this.pq[i] = this.pq[j];
+		this.pq[j] = swap;
+	}
 }

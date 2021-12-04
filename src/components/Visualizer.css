@@ -1,32 +1,32 @@
 .grid {
-  display: inline-flex;
-  flex-direction: column;
-  margin: 8px 0;
+	display: inline-flex;
+	flex-direction: column;
+	margin: 8px 0;
 }
 
 .row {
-  display: inline-flex;
+	display: inline-flex;
 }
 
 .row > * {
-  border-right: var(--BORDER);
-  border-bottom: var(--BORDER);
+	border-right: var(--BORDER);
+	border-bottom: var(--BORDER);
 }
 
 .grid > :first-child > * {
-  border-top: var(--BORDER);
+	border-top: var(--BORDER);
 }
 
 .row > :first-child {
-  border-left: var(--BORDER);
+	border-left: var(--BORDER);
 }
 
 .buttons {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
 }
 
 .buttons > :not(:last-child) {
-  margin-right: 10px;
+	margin-right: 10px;
 }
