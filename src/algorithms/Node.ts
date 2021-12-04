@@ -10,17 +10,12 @@ export class Node {
 	public gScore: number;
 	private _hScore: number;
 	private _weight: number;
-	public distance: number;
 	constructor(readonly row: number, readonly col: number, readonly type: NodeType = NodeType.Empty) {
 		this.gScore = -1;
 		this._hScore = -1;
-		this.distance = -1;
-		if (type === NodeType.Weight) {
-			this._weight = (Math.random() * 100) | 0;
-		} else {
-			this._weight = 1;
-		}
+		this._weight = type === NodeType.Weight ? (Math.random() * 100) | 0 : 1;
 	}
+
 	get weight() {
 		return this._weight;
 	}
@@ -32,6 +27,6 @@ export class Node {
 	}
 
 	get fScore() {
-		return this.gScore + this._hScore;
+		return this.gScore + this._hScore + this._weight;
 	}
 }

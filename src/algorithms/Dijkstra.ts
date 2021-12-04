@@ -3,7 +3,7 @@ import { MinPQ } from "./MinPQ";
 import { Node, Position } from "./Node";
 
 const comparator = (x: Node, y: Node) => {
-	return x.distance > y.distance ? 1 : x.distance < y.distance ? -1 : 0;
+	return x.gScore > y.gScore ? 1 : x.gScore < y.gScore ? -1 : 0;
 };
 
 export class Dijkstra extends Pathfinder {
@@ -13,7 +13,7 @@ export class Dijkstra extends Pathfinder {
 		super(G, s);
 		this.pq = new MinPQ(G.length * G[0].length, comparator);
 		const [r, c] = s;
-		this.G[r][c].distance = 0;
+		this.G[r][c].gScore = 0;
 		this.marked[r][c] = true;
 		this.pq.insert(this.G[r][c]);
 
@@ -29,7 +29,7 @@ export class Dijkstra extends Pathfinder {
 		const [fr, fc] = from;
 		const [tr, tc] = to;
 		if (!this.isNodeValid(tr, tc)) return;
-		this.G[tr][tc].distance = this.G[fr][fc].distance + this.G[tr][tc].weight;
+		this.G[tr][tc].gScore = this.G[fr][fc].gScore + this.G[tr][tc].weight;
 		this.edgeTo[tr][tc] = [fr, fc];
 		this.marked[tr][tc] = true;
 		this.pq.insert(this.G[tr][tc]);
