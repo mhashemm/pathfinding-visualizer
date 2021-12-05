@@ -3,7 +3,7 @@ import { Node, NodeType, Position } from "./Node";
 export abstract class Pathfinder {
 	protected edgeTo: Position[][];
 	protected marked: boolean[][];
-	protected s: Position;
+	protected start: Position;
 	protected steps: Position[];
 	protected G: Node[][];
 	protected directions = [
@@ -13,12 +13,12 @@ export abstract class Pathfinder {
 		[0, -1],
 	];
 
-	constructor(G: Node[][], s: Position) {
+	constructor(G: Node[][], start: Position) {
 		this.G = G;
 		this.edgeTo = G.map((row) => row.map(() => [0, 0]));
 		this.marked = G.map((row) => row.map(() => false));
-		this.s = s;
-		this.steps = [this.s];
+		this.start = start;
+		this.steps = [this.start];
 	}
 
 	protected isOutOfRange(row: number, col: number) {
@@ -38,11 +38,11 @@ export abstract class Pathfinder {
 		const path: Position[] = [];
 		let x: Position = [row, col];
 
-		while (x[0] !== this.s[0] || x[1] !== this.s[1]) {
+		while (x[0] !== this.start[0] || x[1] !== this.start[1]) {
 			path.push(x);
 			x = this.edgeTo[x[0]][x[1]];
 		}
-		path.push(this.s);
+		path.push(this.start);
 		return path;
 	}
 

@@ -1,22 +1,24 @@
-export class MinPQ<T> {
-	private pq: T[];
-	private n: number;
-	private comparator: (x: T, y: T) => -1 | 0 | 1;
+import { Node } from "./Node";
 
-	constructor(capacity: number, comparator: (x: T, y: T) => -1 | 0 | 1) {
+export class MinPQ {
+	private pq: [key: number, value: Node][];
+	private n: number;
+	private key: (x: Node) => number;
+
+	constructor(capacity: number, key: (x: Node) => number) {
 		this.pq = new Array(capacity + 1);
 		this.n = 0;
-		this.comparator = comparator;
+		this.key = key;
 	}
 
-	public insert(x: T) {
-		this.pq[++this.n] = x;
+	public insert(x: Node) {
+		this.pq[++this.n] = [this.key(x), x];
 		this.swim(this.n);
 	}
 
 	public delMin() {
 		if (this.isEmpty()) return;
-		const min = this.pq[1];
+		const min = this.pq[1][1];
 		this.exch(1, this.n--);
 		this.sink(1);
 		this.pq[this.n + 1] = null!;
@@ -45,7 +47,7 @@ export class MinPQ<T> {
 	}
 
 	private greater(i: number, j: number) {
-		return this.comparator(this.pq[i], this.pq[j]) === 1;
+		return this.pq[i][0] > this.pq[j][0];
 	}
 
 	private exch(i: number, j: number) {

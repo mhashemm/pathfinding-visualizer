@@ -2,35 +2,31 @@ import { Pathfinder } from "./Pathfinder";
 import { MinPQ } from "./MinPQ";
 import { Node, Position } from "./Node";
 
-const comparator = (x: Node, y: Node) => {
-	return x.gScore > y.gScore ? 1 : x.gScore < y.gScore ? -1 : 0;
-};
-
 export class Dijkstra extends Pathfinder {
-	private pq: MinPQ<Node>;
+	private pq: MinPQ;
 
-	constructor(G: Node[][], s: Position) {
-		super(G, s);
-		this.pq = new MinPQ(G.length * G[0].length, comparator);
-		const [r, c] = s;
+	constructor(G: Node[][], start: Position) {
+		super(G, start);
+		this.pq = new MinPQ(G.length * G[0].length, (x) => x.gScore);
+		const [r, c] = start;
 		this.G[r][c].gScore = 0;
 		this.marked[r][c] = true;
 		this.pq.insert(this.G[r][c]);
 
 		while (!this.pq.isEmpty()) {
-			const { row, col } = this.pq.delMin()!;
+			const node = this.pq.delMin()!;
 			for (const [dr, dc] of this.directions) {
-				this.relax([row, col], [row + dr, col + dc]);
+				const [nr, nc] = [node.row + dr, node.col + dc];
+				if (this.isNodeValid(nr, nc)) this.relax(node, [nr, nc]);
 			}
 		}
 	}
 
-	private relax(from: Position, to: Position) {
-		const [fr, fc] = from;
+	private relax(from: Node, to: Position) {
 		const [tr, tc] = to;
 		if (!this.isNodeValid(tr, tc)) return;
-		this.G[tr][tc].gScore = this.G[fr][fc].gScore + this.G[tr][tc].weight;
-		this.edgeTo[tr][tc] = [fr, fc];
+		this.G[tr][tc].gScore = from.gScore + this.G[tr][tc].weight;
+		this.edgeTo[tr][tc] = [from.row, from.col];
 		this.marked[tr][tc] = true;
 		this.pq.insert(this.G[tr][tc]);
 		this.steps.push([tr, tc]);
